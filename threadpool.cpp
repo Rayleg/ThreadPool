@@ -50,19 +50,16 @@ class ThreadPool {
 			return NULL;
 		if (high_in_process < 3 && !queues[P_HIGH].empty()) {
 			task = queues[P_HIGH].front();
-            cout << "Take task " << task << " with " << P_HIGH  << " priority" << endl;
 			queues[P_HIGH].pop();
 			high_in_process++;
 			return task;
 		}
 		if (!queues[P_NORMAL].empty()) {
 			task = queues[P_NORMAL].front();
-            cout << "Take task " << task << " with " << P_NORMAL  << " priority" << endl;
 			queues[P_NORMAL].pop();
 		}
 		else {
 			task = queues[P_LOW].front();
-            cout << "Take task " << task << " with " << P_LOW  << " priority" << endl;
 			queues[P_LOW].pop();
 		}
 		high_in_process = 0;
@@ -80,9 +77,7 @@ class ThreadPool {
 				pthread_exit(NULL);
 			}
 			pthread_mutex_unlock(&(self->task_mutex));
-            cout << "Run task " << task << endl;
 			task->run();
-            cout << "End of  task " << task << endl;
 			delete task;
 		}
 		return NULL;
@@ -92,7 +87,6 @@ public:
 		pthread_t t;
 		pthread_mutex_init(&task_mutex, NULL);
 		pthread_cond_init(&task_cond, NULL);
-		cout << "Initialize TreadPool with " << max_workers << " threads" << endl;
 		for (int i = 0; i < max_workers; i++) {
 			pthread_create(&t, NULL, manage, this);
 			workers.push_back(t);
@@ -102,7 +96,6 @@ public:
 		if (state == STOPPING)
 			return false;
 		pthread_mutex_lock(&task_mutex);
-        cout << "Push " << t << " task with " << priority << " priority" << endl;
 		queues[priority].push(t);
 		pthread_cond_signal(&task_cond);
 		pthread_mutex_unlock(&task_mutex);
